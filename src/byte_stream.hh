@@ -13,14 +13,14 @@ class ByteStream
 {
 
 public:
-  std::deque<char> buffer_ = {};
+  std::deque<std::string> buffer_ = {};
   size_t capacity_ = 0;
-  size_t read_count_ = 0;
-  size_t write_count_ = 0;
+  size_t bytes_pushed_ = 0;
+  size_t bytes_poped_ = 0;
   bool input_ended_flag_ = false;
   bool error_ = false;
   std::string_view buffer_view_{};
-  std::string tmp_{""};
+
 public:
   explicit ByteStream( uint64_t capacity );
 
@@ -31,25 +31,7 @@ public:
   const Writer& writer() const;
 
   bool has_error() const { return error_; }; // Has the stream had an error?
-
-  // for writer
-  size_t write(const std::string &data);
-  size_t remaining_capacity() const;
-  void end_input();
-  void set_error();
-
-  // for reader
-  std::string peek_output(const size_t len) const; // Remove ''len'' bytes from the buffer
-  void pop_output(const size_t len); // Read (i.e., copy and then pop) the next "len" bytes of the stream
-  std::string read(const size_t len);
-  bool input_ended() const; // 'true' if the stream input has ended
-  bool eof() const; // 'true' if the output has reached the ending
-  bool error() const; // 'true' if the stream has suffered an error
-  size_t buffer_size() const; // the maximum amount that can currently be peeked/read
-  bool buffer_empty() const; // 'true' if the buffer is empty
-  size_t bytes_written() const; // Total number of bytes written
-  size_t bytes_read() const; // Total number of bytes popped
-
+  void set_error() { error_ = true; };
 };
 
 class Writer : public ByteStream
